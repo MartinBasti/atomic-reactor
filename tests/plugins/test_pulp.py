@@ -38,6 +38,11 @@ if MOCK:
     from tests.docker_mock import mock_docker
 
 
+# py2/3 compatibility
+if sys.version_info.major > 2:
+    unicode = str
+
+
 class X(object):
     image_id = INPUT_IMAGE
     git_dockerfile_path = None
