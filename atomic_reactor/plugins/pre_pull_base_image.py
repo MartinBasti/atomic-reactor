@@ -27,6 +27,7 @@ from atomic_reactor.core import RetryGeneratorException
 from atomic_reactor.plugins.pre_reactor_config import (get_source_registry,
                                                        get_platform_to_goarch_mapping,
                                                        get_goarch_to_platform_mapping,
+                                                       get_registries,
                                                        get_registries_organization)
 from requests.exceptions import HTTPError, RetryError, Timeout
 from osbs.utils import RegistryURI
@@ -64,6 +65,8 @@ class PullBaseImagePlugin(PreBuildPlugin):
             self.parent_registry_insecure = False
         if parent_images_digests:
             self._load_parent_images_digests(parent_images_digests)
+
+        self.registries = get_registries(self.workflow, {})
 
     def run(self):
         """
@@ -297,13 +300,24 @@ class PullBaseImagePlugin(PreBuildPlugin):
         self.log.error("giving up trying to pull image")
         raise RuntimeError("too many attempts to pull and tag image")
 
+    def _get_dockercfg_secret_path(self, registry):
+        """return path to dockercfg secret"""
+        registry_cfg = self.registries.get(registry, {})
+        if not registry_cfg:
+            self.log.warning("No dockercfg found for registry %s", registry)
+        dockercfg_secret_path = registry_cfg.get('secret')
+        return dockercfg_secret_path
+
     def _get_manifest_list(self, image):
         """try to figure out manifest list"""
         if image in self.manifest_list_cache:
             return self.manifest_list_cache[image]
 
+        dockercfg_secret_path = self._get_dockercfg_secret_path(image.registry)
+
         manifest_list = get_manifest_list(image, image.registry,
-                                          insecure=self.parent_registry_insecure)
+                                          insecure=self.parent_registry_insecure,
+                                          dockercfg_path=dockercfg_secret_path)
         if '@sha256:' in str(image) and not manifest_list:
             # we want to adjust the tag only for manifest list fetching
             image = image.copy()
