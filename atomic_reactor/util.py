@@ -750,6 +750,7 @@ class RegistrySession(object):
 
             username = dockercfg.get('username')
             password = dockercfg.get('password')
+        logger.critical("RegistrySession username: %s", username)
         self.auth = HTTPRegistryAuth(username, password, access=access)
 
         self._fallback = None
