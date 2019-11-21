@@ -80,7 +80,7 @@ class SourceContainerPlugin(BuildStepPlugin):
 
         self.log.debug("Build log:\n%s", "\n".join(output))
 
-        self.tasker.cleanup_containers(container_id)
+        #self.tasker.cleanup_containers(container_id)
 
         status_code = response['StatusCode']
         if status_code != 0:
@@ -89,6 +89,9 @@ class SourceContainerPlugin(BuildStepPlugin):
                 "See build logs for details".format(status_code)
             )
             return BuildResult(logs=output, fail_reason=reason)
+
+        import os
+        self.log.critical('%s', os.listdir(image_output_dir))
 
         return BuildResult(
             logs=output,

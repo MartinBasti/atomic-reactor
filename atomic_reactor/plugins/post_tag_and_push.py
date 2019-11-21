@@ -96,6 +96,8 @@ class TagAndPushPlugin(PostBuildPlugin):
                 raise RuntimeError("Attempt to push unsupported image type %s with skopeo" %
                                    image['type'])
         else:
+            import os
+            self.log.critical('%s', os.listdir(source_oci_image_path))
             source_img = 'oci:{}'.format(source_oci_image_path)
 
         dest_img = 'docker://' + registry_image.to_str()
