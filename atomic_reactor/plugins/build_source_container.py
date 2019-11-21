@@ -72,7 +72,7 @@ class SourceContainerPlugin(BuildStepPlugin):
         )
         container_id = self.tasker.run(
             pulled_img,
-            create_kwargs={'volumes': [source_data_dir, image_output_dir]},
+            #create_kwargs={'volumes': [source_data_dir, image_output_dir]},
             volume_bindings=volume_bindings,
             command=command
         )
@@ -82,6 +82,8 @@ class SourceContainerPlugin(BuildStepPlugin):
         self.log.debug("Build log:\n%s", "\n".join(output))
 
         #self.tasker.cleanup_containers(container_id)
+        import time
+        time.sleep(1600)
 
         status_code = response['StatusCode']
         if status_code != 0:
