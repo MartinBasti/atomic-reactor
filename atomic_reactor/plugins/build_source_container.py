@@ -72,6 +72,7 @@ class SourceContainerPlugin(BuildStepPlugin):
         )
         container_id = self.tasker.run(
             pulled_img,
+            create_kwargs={'volumes': [source_data_dir, image_output_dir]},
             volume_bindings=volume_bindings,
             command=command
         )
