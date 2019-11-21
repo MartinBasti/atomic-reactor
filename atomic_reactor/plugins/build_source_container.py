@@ -56,11 +56,11 @@ class SourceContainerPlugin(BuildStepPlugin):
         volume_bindings = {
             source_data_dir: {
                 'bind': srpms_path,
-                'mode': 'ro,Z',
+                'mode': 'ro,z',
             },
             image_output_dir: {
                 'bind': output_path,
-                'mode': 'rw,Z',
+                'mode': 'rw,z',
             }
         }
 
@@ -72,7 +72,7 @@ class SourceContainerPlugin(BuildStepPlugin):
         )
         container_id = self.tasker.run(
             pulled_img,
-            create_kwargs={'volumes': [source_data_dir, image_output_dir]},
+            #create_kwargs={'volumes': [source_data_dir, image_output_dir]},
             volume_bindings=volume_bindings,
             command=command
         )
