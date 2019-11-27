@@ -472,15 +472,16 @@ class KojiImportPlugin(ExitPlugin):
                         for md in osbs_logs.get_log_files(self.osbs, self.build_id)]
 
         # TODO remove - testing
-        #if output_file:
-        #    output_files.append(output_file)
+        if output_file:
+            output_files.append(output_file)
         output.extend([of.metadata for of in output_files])
+        self.log.critical("%s", output)
 
         koji_metadata = {
             'metadata_version': metadata_version,
             'build': build,
             'buildroots': buildroot,
-            #'output': output,
+            'output': output,
         }
         return koji_metadata, output_files
 
