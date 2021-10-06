@@ -25,11 +25,6 @@ elif [[ $($ENGINE ps -q -f name="$CONTAINER_NAME" | wc -l) -eq 0 ]]; then
 fi
 
 function setup_osbs() {
-  # Optionally specify repo and branch for osbs-client to test changes
-  # which depend on osbs-client patches not yet available in upstream master
-  OSBS_CLIENT_REPO=${OSBS_CLIENT_REPO:-https://github.com/containerbuildsystem/osbs-client}
-  OSBS_CLIENT_BRANCH=${OSBS_CLIENT_BRANCH:-master}
-
   # PIP_PREFIX: osbs-client provides input templates that must be copied into /usr/share/...
   ENVS='-e PIP_PREFIX=/usr'
   RUN="$ENGINE exec -i ${ENVS} $CONTAINER_NAME"
@@ -41,7 +36,6 @@ function setup_osbs() {
   PIP="pip$PYTHON_VERSION"
   PKG="dnf"
   PKG_EXTRA=(dnf-plugins-core desktop-file-utils flatpak ostree libmodulemd skopeo glibc-langpack-en "$PY_PKG" python3-pylint)
-  BUILDDEP=(dnf builddep)
   if [[ $OS == "centos" ]]; then
     ENABLE_REPO=
   else
@@ -84,10 +78,8 @@ function setup_osbs() {
     $RUN "${PIP_INST[@]}" --upgrade setuptools
   fi
 
-  # Install other dependencies for tests
-
-  # Pip install docker-squash
-  $RUN "${PIP_INST[@]}" docker-squash
+  # install with RPM_PY_SYS=true to avoid error caused by installing on system python
+  $RUN sh -c "RPM_PY_SYS=true ${PIP_INST[*]} rpm-py-installer"
   # Setuptools install atomic-reactor from source
   $RUN $PYTHON setup.py install
 
