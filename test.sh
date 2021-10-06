@@ -64,8 +64,6 @@ function setup_osbs() {
 
   # RPM install basic dependencies
   $RUN $PKG $ENABLE_REPO install -y "${PKG_EXTRA[@]}"
-  # RPM install build dependencies for atomic-reactor
-  $RUN "${BUILDDEP[@]}" -y atomic-reactor.spec
   if [[ $OS != "centos" ]]; then
     # RPM remove python-docker-py because docker-squash will pull
     # in the latest version from PyPI. Don't remove the dependencies
@@ -88,22 +86,6 @@ function setup_osbs() {
 
   # Install other dependencies for tests
 
-  # Install osbs-client dependencies based on specfile
-  # from specified git source (default: upstream master)
-  $RUN rm -rf /tmp/osbs-client
-  $RUN git clone --depth 1 --single-branch \
-      "${OSBS_CLIENT_REPO}" --branch "${OSBS_CLIENT_BRANCH}" /tmp/osbs-client
-  # RPM install build dependencies for osbs-client
-  $RUN "${BUILDDEP[@]}" -y /tmp/osbs-client/osbs-client.spec
-  # Run pip install with '--no-deps' to avoid compilation
-  # This would also ensure all the deps are specified in the spec
-  $RUN "${PIP_INST[@]}" --upgrade --no-deps --force-reinstall \
-      "git+${OSBS_CLIENT_REPO}@${OSBS_CLIENT_BRANCH}"
-  # Pip install dockerfile-parse
-  $RUN "${PIP_INST[@]}" --upgrade --no-deps --force-reinstall git+https://github.com/DBuildService/dockerfile-parse
-
-  # install with RPM_PY_SYS=true to avoid error caused by installing on system python
-  $RUN sh -c "RPM_PY_SYS=true ${PIP_INST[*]} rpm-py-installer"
   # Pip install docker-squash
   $RUN "${PIP_INST[@]}" docker-squash
   # Setuptools install atomic-reactor from source
