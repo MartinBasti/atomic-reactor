@@ -49,7 +49,7 @@ setup(
         'console_scripts': ['atomic-reactor=atomic_reactor.cli.main:run'],
     },
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
-    install_requires=_get_requirements('requirements.txt'),
+    install_requires=_get_requirements('requirements.in'),
     python_requires='>=3.8, <4',
     package_data={'atomic_reactor': ['schemas/*.json']},
     data_files=data_files.items(),
