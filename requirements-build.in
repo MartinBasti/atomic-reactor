@@ -4,10 +4,7 @@ flit_core<4,>=3.2.0
 packaging>=20.0
 poetry-core
 pyparsing>=2.0.2
-setuptools
-setuptools>=40.6.0
 setuptools>=42
 setuptools_scm[toml]>=3.4
-tomli
-tomli>=1.0.0
+tomli==1.0.1
 wheel
