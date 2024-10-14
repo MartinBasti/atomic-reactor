@@ -36,7 +36,7 @@ def remote_source_to_cachi2(remote_source: Dict[str, Any]) -> Dict[str, Any]:
     )
     cachi2_packages = []
 
-    for pkg_manager in remote_source["pkg_managers"]:
+    for pkg_manager in remote_source.get("pkg_managers", {}):
         if pkg_manager in removed_pkg_managers:
             continue
 
